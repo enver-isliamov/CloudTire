@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: "TiCRM - Система учета хранения шин",
-  description: "Управление хранением автомобильных шин",
+  title: 'TiCRM - Система учета хранения шин',
+  description: 'Управление хранением автомобильных шин',
 };
 
 export default function RootLayout({
