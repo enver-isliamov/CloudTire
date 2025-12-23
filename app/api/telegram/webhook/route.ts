@@ -56,6 +56,10 @@ bot.command('help', async (ctx) => {
 });
 
 bot.on('callback_query', async (ctx) => {
+  if (!('data' in ctx.callbackQuery)) {
+    return;
+  }
+  
   const data = ctx.callbackQuery.data;
   await ctx.answerCbQuery();
   

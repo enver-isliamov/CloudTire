@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAuth } from '@/lib/session';
-import { analyzeTirePhoto } from '@/lib/gemini';
-import { uploadPhoto } from '@/lib/storage';
 
 // GET - список заказов
 export async function GET(request: NextRequest) {
@@ -152,40 +150,13 @@ export async function POST(request: NextRequest) {
                   season: tireData.season,
                   description: tireData.description,
                   status: 'storage',
-                  wearLevel: tireData.wearLevel,
+                  wearLevel: tireData.wearLevel || 50,
                   storageLocation: `${warehouse}-${cell}`,
                   dotCodes: {
                     create: (tireData.dotCodes || []).map((code: string) => ({
                       dotCode: code,
                     })),
                   },
-                  photos: tireData.photos
-                    ? {
-                        create: await Promise.all(
-                          tireData.photos.map(async (photo: any) => {
-                            // Загрузить фото
-                            const uploaded = await uploadPhoto(
-                              photo.file,
-                              `tires/${client.id}/${Date.now()}.jpg`
-                            );
-
-                            // AI анализ фото
-                            let aiAnalysis = null;
-                            try {
-                              aiAnalysis = await analyzeTirePhoto(photo.file);
-                            } catch (e) {
-                              console.error('AI analysis failed:', e);
-                            }
-
-                            return {
-                              url: uploaded.url,
-                              storageType: uploaded.storageType,
-                              aiAnalysis,
-                            };
-                          })
-                        ),
-                      }
-                    : undefined,
                 },
               });
 
